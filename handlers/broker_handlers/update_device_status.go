@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	statusTopicRE = regexp.MustCompile(`status.([\w\-]+)`)
+	statusTopicRE = regexp.MustCompile(`state.(\d+)`)
 )
 
 func UpdateDeviceStatus(ctx gobroker.ConsumerContext, message gobroker.Message) error {

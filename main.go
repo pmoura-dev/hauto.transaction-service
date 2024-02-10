@@ -17,7 +17,7 @@ import (
 const (
 	devicesExchange = "devices"
 
-	deviceStatusQueue = "device.status.transaction-service.queue"
+	deviceStatusQueue = "device.state.transaction-service.queue"
 )
 
 func main() {
@@ -29,8 +29,7 @@ func main() {
 
 	r := mux.NewRouter()
 	handler := http_handlers.HandlerWithDB{Conn: db}
-	r.HandleFunc("/devices/{device_id:[0-9]+}/control_data", handler.GetDeviceControlData).Methods("Get")
-
+	r.HandleFunc("/devices/mqtt_configuration", handler.GetDevicesMQTTConfiguration).Methods("GET")
 	go func() {
 		if err = http.ListenAndServe("localhost:8080", r); err != nil {
 			log.Fatal(err)
@@ -39,7 +38,7 @@ func main() {
 
 	b := brokers.NewRabbitMQBroker()
 	b.AddExchange(devicesExchange)
-	b.AddQueue(deviceStatusQueue).Bind(devicesExchange, "status.#")
+	b.AddQueue(deviceStatusQueue).Bind(devicesExchange, "state.#")
 
 	s := gobroker.NewServer(b)
 	s.Use(middleware.Logging)
