@@ -28,3 +28,19 @@ func GetDatabaseConfig() DatabaseConfig {
 		DBName:   getEnv("POSTGRES_DB", "hauto"),
 	}
 }
+
+type RabbitMQConfig struct {
+	Host     string
+	Port     string
+	User     string
+	Password string
+}
+
+func GetRabbitMQConfig() RabbitMQConfig {
+	return RabbitMQConfig{
+		Host:     getEnv("RABBITMQ_HOST", "localhost"),
+		Port:     getEnv("RABBITMQ_PORT", "5672"),
+		User:     getEnv("RABBITMQ_USER", "guest"),
+		Password: getEnv("RABBITMQ_PASSWORD", "guest"),
+	}
+}

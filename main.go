@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -31,7 +32,7 @@ func main() {
 	handler := http_handlers.HandlerWithDB{Conn: db}
 	r.HandleFunc("/devices/mqtt_configuration", handler.GetDevicesMQTTConfiguration).Methods("GET")
 	go func() {
-		if err = http.ListenAndServe("localhost:8080", r); err != nil {
+		if err = http.ListenAndServe(":8080", r); err != nil {
 			log.Fatal(err)
 		}
 	}()
@@ -45,7 +46,14 @@ func main() {
 
 	s.AddConsumer(deviceStatusQueue, broker_handlers.UpdateDeviceStatus).AddParam("database", db)
 
-	if err = s.Run("amqp://guest:guest@localhost:5672"); err != nil {
+	rabbitMQConfig := config.GetRabbitMQConfig()
+	if err = s.Run(
+		fmt.Sprintf("amqp://%s:%s@%s:%s",
+			rabbitMQConfig.User,
+			rabbitMQConfig.Password,
+			rabbitMQConfig.Host,
+			rabbitMQConfig.Port,
+		)); err != nil {
 		log.Fatal(err)
 	}
 }
