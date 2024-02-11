@@ -11,6 +11,18 @@ func getEnv(key, fallback string) string {
 	return fallback
 }
 
+type AppConfig struct {
+	Host string
+	Port string
+}
+
+func GetAppConfig() AppConfig {
+	return AppConfig{
+		Host: getEnv("APP_HOST", ""),
+		Port: getEnv("APP_PORT", "5432"),
+	}
+}
+
 type DatabaseConfig struct {
 	Host     string
 	Port     string

@@ -28,11 +28,12 @@ func main() {
 		log.Fatal(err)
 	}
 
+	appConfig := config.GetAppConfig()
 	r := mux.NewRouter()
 	handler := http_handlers.HandlerWithDB{Conn: db}
 	r.HandleFunc("/devices/mqtt_configuration", handler.GetDevicesMQTTConfiguration).Methods("GET")
 	go func() {
-		if err = http.ListenAndServe(":8080", r); err != nil {
+		if err = http.ListenAndServe(fmt.Sprintf("%s:%s", appConfig.Host, appConfig.Port), r); err != nil {
 			log.Fatal(err)
 		}
 	}()
