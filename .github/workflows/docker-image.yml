@@ -33,3 +33,5 @@ jobs:
           docker build -t $IMAGE_NAME .
           docker tag $IMAGE_NAME ghcr.io/${{ github.actor }}/$IMAGE_NAME:$VERSION
           docker push ghcr.io/${{ github.actor }}/$IMAGE_NAME:$VERSION
+        with:
+          platforms: linux/amd64,linux/arm64
