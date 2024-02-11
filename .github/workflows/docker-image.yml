@@ -30,8 +30,6 @@ jobs:
           IMAGE_NAME: hauto.transaction-service
         run: |
           VERSION=$(echo $TAG_NAME | sed 's/v//')
-          docker build -t $IMAGE_NAME .
+          docker build --platform linux/amd64 --platform linux/arm64 -t $IMAGE_NAME .
           docker tag $IMAGE_NAME ghcr.io/${{ github.actor }}/$IMAGE_NAME:$VERSION
           docker push ghcr.io/${{ github.actor }}/$IMAGE_NAME:$VERSION
-        with:
-          platforms: linux/amd64,linux/arm64
