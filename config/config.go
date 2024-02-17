@@ -18,8 +18,8 @@ type AppConfig struct {
 
 func GetAppConfig() AppConfig {
 	return AppConfig{
-		Host: getEnv("APP_HOST", ""),
-		Port: getEnv("APP_PORT", "5432"),
+		Host: getEnv("APP_HOST", "localhost"),
+		Port: getEnv("APP_PORT", "8080"),
 	}
 }
 
