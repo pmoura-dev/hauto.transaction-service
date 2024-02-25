@@ -2,7 +2,7 @@ package http_handlers
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/pmoura-dev/hauto.transaction-service/dataaccess"
@@ -15,26 +15,25 @@ type deviceMQTTConfiguration struct {
 }
 
 func (h *HandlerWithDB) GetDevicesMQTTConfiguration(w http.ResponseWriter, r *http.Request) {
-
-	mqttConfigurationRows, err := dataaccess.GetDevicesMQTTConfiguration(h.Conn)
+	response, err := dataaccess.GetDevicesMQTTConfiguration(h.Conn)
 	if err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	response, err := buildResponse(mqttConfigurationRows)
+	jsonResponse, err := buildResponse(response)
 	if err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Println(2)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	_, _ = w.Write(response)
+	w.Header().Add("Content-Type", "application/json")
+	_, _ = w.Write(jsonResponse)
 }
 
-func buildResponse(rows []dataaccess.DevicesMQTTConfigurationRow) ([]byte, error) {
+func buildResponse(rows dataaccess.GetDevicesMQTTConfigurationResponse) ([]byte, error) {
 	response := make(map[int]deviceMQTTConfiguration)
 
 	for _, row := range rows {

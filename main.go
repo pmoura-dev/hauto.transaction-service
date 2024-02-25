@@ -31,8 +31,10 @@ func main() {
 	appConfig := config.GetAppConfig()
 	r := mux.NewRouter()
 	handler := http_handlers.HandlerWithDB{Conn: db}
-	r.HandleFunc("/devices/mqtt_configuration", handler.GetDevicesMQTTConfiguration).Methods("GET")
-	r.HandleFunc("/devices/{deviceID:[0-9]+}/state", handler.GetDeviceState).Methods("GET")
+
+	r.HandleFunc("/execute/get_device", handler.GetDevice).Methods("POST")
+	r.HandleFunc("/execute/get_device_state", handler.GetDeviceState).Methods("POST")
+	r.HandleFunc("/execute/get_devices_mqtt_configuration", handler.GetDevicesMQTTConfiguration).Methods("POST")
 
 	go func() {
 		if err = http.ListenAndServe(fmt.Sprintf("%s:%s", appConfig.Host, appConfig.Port), r); err != nil {

@@ -3,7 +3,6 @@ package http_handlers
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -11,7 +10,11 @@ import (
 	"github.com/pmoura-dev/hauto.transaction-service/dataaccess"
 )
 
-func (h *HandlerWithDB) GetDeviceState(w http.ResponseWriter, r *http.Request) {
+type GetDeviceRequest struct {
+	DeviceID int `json:"device_id"`
+}
+
+func (h *HandlerWithDB) GetDevice(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		log.Println(err)
@@ -19,7 +22,7 @@ func (h *HandlerWithDB) GetDeviceState(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var request dataaccess.GetDeviceStateParams
+	var request dataaccess.GetDeviceParams
 	err = json.Unmarshal(body, &request)
 	if err != nil {
 		log.Println(err)
@@ -27,9 +30,9 @@ func (h *HandlerWithDB) GetDeviceState(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response, err := dataaccess.GetDeviceState(h.Conn, request)
+	response, err := dataaccess.GetDevice(h.Conn, request)
 	switch {
-	case errors.Is(err, dataaccess.ErrDeviceStateNotFound):
+	case errors.Is(err, dataaccess.ErrDeviceNotFound):
 		log.Println(err)
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -39,11 +42,12 @@ func (h *HandlerWithDB) GetDeviceState(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jsonResponse := []byte(fmt.Sprintf(`{"device_id": %d, "timestamp": "%s", "state": %s}`,
-		response.DeviceID,
-		response.Timestamp,
-		response.State,
-	))
+	jsonResponse, err := json.Marshal(response)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	w.Header().Add("Content-Type", "application/json")
 	_, _ = w.Write(jsonResponse)

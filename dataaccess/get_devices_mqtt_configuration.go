@@ -12,7 +12,9 @@ type DevicesMQTTConfigurationRow struct {
 	Topic        string
 }
 
-func GetDevicesMQTTConfiguration(conn *sql.DB) ([]DevicesMQTTConfigurationRow, error) {
+type GetDevicesMQTTConfigurationResponse []DevicesMQTTConfigurationRow
+
+func GetDevicesMQTTConfiguration(conn *sql.DB) (GetDevicesMQTTConfigurationResponse, error) {
 
 	rows, err := conn.Query(`SELECT * FROM get_devices_mqtt_configuration();`)
 	if err != nil {
