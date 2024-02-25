@@ -12,10 +12,10 @@ var (
 	statusTopicRE = regexp.MustCompile(`state.(\d+)`)
 )
 
-func UpdateDeviceStatus(ctx gobroker.ConsumerContext, message gobroker.Message) error {
+func UpdateDeviceState(ctx gobroker.ConsumerContext, message gobroker.Message) error {
 	dbConnection := ctx.Params["database"].(*sql.DB)
 
-	naturalID := statusTopicRE.FindStringSubmatch(message.GetTopic())[1]
+	deviceID := statusTopicRE.FindStringSubmatch(message.GetTopic())[1]
 
-	return dataaccess.UpsertDeviceStatus(dbConnection, naturalID, string(message.GetBody()))
+	return dataaccess.UpsertDeviceState(dbConnection, deviceID, string(message.GetBody()))
 }

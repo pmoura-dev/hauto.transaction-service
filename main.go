@@ -49,7 +49,7 @@ func main() {
 	s := gobroker.NewServer(b)
 	s.Use(middleware.Logging)
 
-	s.AddConsumer(deviceStatusQueue, broker_handlers.UpdateDeviceStatus).AddParam("database", db)
+	s.AddConsumer(deviceStatusQueue, broker_handlers.UpdateDeviceState).AddParam("database", db)
 
 	rabbitMQConfig := config.GetRabbitMQConfig()
 	if err = s.Run(
