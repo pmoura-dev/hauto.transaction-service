@@ -10,13 +10,13 @@ type GetDeviceParams struct {
 }
 
 type GetDeviceResponse struct {
-	ID           int
-	NaturalID    string
-	Name         string
-	Manufacturer *string
-	Model        *string
-	RoomID       int
-	Controller   string
+	ID           int     `json:"id"`
+	NaturalID    string  `json:"natural_id"`
+	Name         string  `json:"name"`
+	Manufacturer *string `json:"manufacturer"`
+	Model        *string `json:"model"`
+	RoomID       int     `json:"room_id"`
+	Controller   string  `json:"controller"`
 }
 
 func GetDevice(conn *sql.DB, params GetDeviceParams) (GetDeviceResponse, error) {
